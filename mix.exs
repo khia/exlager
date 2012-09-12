@@ -1,4 +1,4 @@
-defmodule EEx.Mixfile do
+defmodule Exlager.Mixfile do
   use Mix.Project
 
   def project do
