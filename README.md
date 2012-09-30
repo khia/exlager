@@ -6,7 +6,7 @@ This package implements a simple wrapper over https://github.com/basho/lager.
 It embeds logging calls to ExLager into a module if currently configured logging
 level is less or equal than severity of a call. Therefore it doesn't have
 any negative impact on performance of a production system when you configure
-error level even if you have tones of debug messages.
+error level even if you have tons of debug messages.
 
 Information about location of a call (module, function, line, pid) is properly
 passed to lager for your convinience so you can easily find the sorce of a message.
