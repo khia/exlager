@@ -9,7 +9,7 @@ any negative impact on performance of a production system when you configure
 error level even if you have tons of debug messages.
 
 Information about location of a call (module, function, line, pid) is properly
-passed to lager for your convinience so you can easily find the sorce of a message.
+passed to lager for your convinience so you can easily find the source of a message.
 In this aspect using ExLager is equal to using parse transform shipped with
 basho lager.
 
