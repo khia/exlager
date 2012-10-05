@@ -39,6 +39,7 @@ defmodule Lager do
     quote do: defp level_to_num(unquote(level)),     do:  unquote(num)
   end
   Module.eval_quoted __MODULE__, quoted, file: __FILE__, line: __ENV__.line
+  defp level_to_num(_), do: nil
 
   defp log(level, format, args, caller) do
     {name, __arity} = caller.function || {:unknown, 0}
@@ -67,9 +68,38 @@ defmodule Lager do
     end
   end
 
-  defp should_log(level) do
-    {log_level, _} = :lager_mochiglobal.get(:loglevel, {level_to_num(:none), []})
-    level_to_num(level) <= log_level
+  defp should_log(level), do: level_to_num(level) <= compile_log_level
+
+  @doc """
+  This function is used to get compile time log level.
+  Examples:
+    iex(4)> Lager.compile_log_level
+    6
+  """
+  def compile_log_level() do
+    options = Keyword.from_enum(Code.compiler_options)
+    options[:exlager_level] || 6
+  end
+
+  @doc """
+  This function is used to set compile time log level.
+  By default the log level is 'info'.
+  Examples:
+    iex(4)> Lager.compile_log_level(6)
+    true
+    iex(4)> Lager.compile_log_level(:info)
+    true
+  """
+  def compile_log_level(level) when level in -1..7 do
+    :ok = Code.compiler_options exlager_level: level
+    true
+  end
+  def compile_log_level(level) when is_atom(level) do
+    compile_log_level(level_to_num(level))
+  end
+  def compile_log_level(level) do
+    IO.puts "ERROR: unknown level #{inspect level}"
+    false
   end
 
   defp truncation_size, do: Mix.project[:opts][:truncation_size] || 4096
