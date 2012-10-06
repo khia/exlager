@@ -51,20 +51,13 @@ defmodule Lager do
   end
 
   defp dispatch(level, module, name, line, format, args) do
-    if version <= 120 do
-      quote do
-        :lager.dispatch_log(unquote(level), unquote(module), unquote(name),
-           unquote(line), self, [], unquote(format), unquote(args))
-      end
-    else
-      quote do
-        :lager.dispatch_log(unquote(level),
-           [module: unquote(module),
-            function: unquote(name),
-            line: unquote(line),
-            pid: self],
-           unquote(format), unquote(args), unquote(truncation_size))
-      end
+    quote do
+      :lager.dispatch_log(unquote(level),
+         [module: unquote(module),
+          function: unquote(name),
+          line: unquote(line),
+          pid: self],
+         unquote(format), unquote(args), unquote(truncation_size))
     end
   end
 
@@ -103,11 +96,4 @@ defmodule Lager do
   end
 
   defp truncation_size, do: Mix.project[:opts][:truncation_size] || 4096
-
-  defp version do
-    {:ok, vsn} = Erlang.application.get_key(:lager, :vsn)
-    vsn = Enum.filter vsn, fn(x) -> [x] != '.' end
-    {vsn, []} = :string.to_integer vsn
-    vsn
-  end
 end
