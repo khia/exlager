@@ -8,7 +8,7 @@ defmodule Lager.App do
 
   defp supervision_tree do
     children = []
-    Sup.OneForOne[id: __MODULE__, registered: __MODULE__, children: children]
+    Sup.OneForOne.new [id: __MODULE__, registered: __MODULE__, children: children]
   end
 
 end
