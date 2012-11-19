@@ -2,7 +2,9 @@ defmodule Exlager.Mixfile do
   use Mix.Project
 
   def project do
-   [app: :exlager, version: "0.1", deps: deps, opts: options]
+   [
+    app: :exlager, version: "0.1", deps: deps
+   ]
   end
 
   def application do
@@ -20,11 +22,6 @@ defmodule Exlager.Mixfile do
     [
      {:lager, %r(.*), git: "https://github.com/basho/lager.git"},
      {:genx, %r(.*), git: "https://github.com/yrashk/genx"}
-    ]
-  end
-  defp options do
-    [
-     truncation_size: 4096
     ]
   end
 end
