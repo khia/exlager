@@ -57,7 +57,7 @@ defmodule Lager do
           function: unquote(name),
           line: unquote(line),
           pid: self],
-         unquote(format), unquote(args), unquote(truncation_size))
+         unquote(format), unquote(args), unquote(compile_truncation_size))
     end
   end
 
@@ -95,12 +95,20 @@ defmodule Lager do
     false
   end
 
-  defp truncation_size do
-    default = 4096
-    try do
-      Mix.project[:opts][:truncation_size] || default
-    catch
-      :exit, { :noproc, _ } -> default
-    end
+  def compile_truncation_size() do
+    options = Keyword.from_enum(Code.compiler_options)
+    options[:exlager_truncation_size] || 4096
+  end
+
+  @doc """
+  This function is used to set compile time truncation size.
+  By default the log level is 'info'.
+  Examples:
+    iex(4)> Lager.compile_truncation_size(512)
+    true
+  """
+  def compile_truncation_size(size) do
+    :ok = Code.compiler_options exlager_truncation_size: size
+    true
   end
 end

@@ -72,4 +72,23 @@ Application.start :exlager
 Test.test
 ```
 
+It is possible to configure truncation size and compile time log level
+by calling helper functions of Lager from your build system as follows:
+
+```
+iex(1)> Lager.compile_log_level(:info)
+true
+iex(2)> Lager.compile_truncation_size(512)
+true
+```
+
+If you cannot call those function you can set compiler options:
+
+```
+iex(3)> Code.compiler_options exlager_level: level 7
+ok
+iex(4)> Code.compiler_options exlager_truncation_size: 512
+ok
+```
+
 
