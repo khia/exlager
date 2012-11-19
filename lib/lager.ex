@@ -95,5 +95,12 @@ defmodule Lager do
     false
   end
 
-  defp truncation_size, do: Mix.project[:opts][:truncation_size] || 4096
+  defp truncation_size do
+    default = 4096
+    try do
+      Mix.project[:opts][:truncation_size] || default
+    catch
+      :exit, { :noproc, _ } -> default
+    end
+  end
 end
