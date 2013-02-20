@@ -3,7 +3,7 @@ defmodule Exlager.Mixfile do
 
   def project do
    [
-    app: :exlager, version: "0.1", deps: deps
+    app: :exlager, version: "0.2", deps: deps
    ]
   end
 
@@ -14,7 +14,6 @@ defmodule Exlager.Mixfile do
         :syntax_tools,
         :lager
       ],
-     mod: {Lager.App, []}
     ]
   end
 

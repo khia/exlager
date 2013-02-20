@@ -25,20 +25,20 @@ defmodule Lager do
 
   quoted = lc {level, _num} inlist levels do
     quote do
-      defmacro unquote(level).(message) do
+      defmacro unquote(level)(message) do
         log(unquote(level), '~s', [message], __CALLER__)
       end
-      defmacro unquote(level).(format, message) do
+      defmacro unquote(level)(format, message) do
         log(unquote(level), format, message, __CALLER__)
       end
     end
   end
-  Module.eval_quoted __MODULE__, quoted, file: __FILE__, line: __ENV__.line
+  Module.eval_quoted __MODULE__, quoted, [], __ENV__
 
   quoted = lc {level, num} inlist levels do
     quote do: defp level_to_num(unquote(level)),     do:  unquote(num)
   end
-  Module.eval_quoted __MODULE__, quoted, file: __FILE__, line: __ENV__.line
+  Module.eval_quoted __MODULE__, quoted, [], __ENV__
   defp level_to_num(_), do: nil
 
   defp log(level, format, args, caller) do
