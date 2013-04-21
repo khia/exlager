@@ -20,7 +20,6 @@ defmodule Exlager.Mixfile do
   defp deps do
     [
      {:lager, %r(.*), git: "https://github.com/basho/lager.git"},
-     {:genx, %r(.*), git: "https://github.com/yrashk/genx"}
     ]
   end
 end
