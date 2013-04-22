@@ -3,7 +3,7 @@ defmodule Exlager.Mixfile do
 
   def project do
    [
-    app: :exlager, version: "0.2", deps: deps
+    app: :exlager, version: "0.2.1", deps: deps
    ]
   end
 

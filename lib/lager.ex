@@ -41,6 +41,12 @@ defmodule Lager do
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
   defp level_to_num(_), do: nil
 
+  quoted = lc {level, num} inlist levels do
+    quote do: defp num_to_level(unquote(num)),     do:  unquote(level)
+  end
+  Module.eval_quoted __MODULE__, quoted, [], __ENV__
+  defp num_to_level(_), do: nil
+
   defp log(level, format, args, caller) do
     {name, __arity} = caller.function || {:unknown, 0}
     module = caller.module || :unknown
@@ -61,17 +67,22 @@ defmodule Lager do
     end
   end
 
-  defp should_log(level), do: level_to_num(level) <= compile_log_level
+  defp should_log(level), do: level_to_num(level) <= level_to_num(compile_log_level)
 
   @doc """
   This function is used to get compile time log level.
   Examples:
     iex(4)> Lager.compile_log_level
-    6
+    :info
   """
   def compile_log_level() do
     options = Keyword.from_enum(Code.compiler_options)
-    options[:exlager_level] || 6
+    level = options[:exlager_level] || :info
+    if is_integer(level) do
+      level = num_to_level(level)
+      IO.puts "Using integers is deprecated, please use :#{level} instead"
+    end
+    level
   end
 
   @doc """
@@ -84,11 +95,11 @@ defmodule Lager do
     true
   """
   def compile_log_level(level) when level in -1..7 do
-    :ok = Code.compiler_options exlager_level: level
-    true
+    compile_log_level(num_to_level(level))
   end
   def compile_log_level(level) when is_atom(level) do
-    compile_log_level(level_to_num(level))
+    :ok = Code.compiler_options exlager_level: level
+    true
   end
   def compile_log_level(level) do
     IO.puts "ERROR: unknown level #{inspect level}"
@@ -102,7 +113,7 @@ defmodule Lager do
 
   @doc """
   This function is used to set compile time truncation size.
-  By default the log level is 'info'.
+  By default the truncation size is 4096.
   Examples:
     iex(4)> Lager.compile_truncation_size(512)
     true

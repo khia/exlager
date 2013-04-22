@@ -3,8 +3,7 @@ defmodule ExLager.Test do
   @top Path.expand "../..", __FILE__
 
   test "debug" do
-    level = 7
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:debug))
     assert disabled == []
     assert enabled == [
      :alert, :critical, :debug, :emergency,
@@ -12,8 +11,7 @@ defmodule ExLager.Test do
   end
 
   test "info" do
-    level = 6
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:info))
     assert disabled == [:debug]
     assert enabled == [
      :alert, :critical, :emergency,
@@ -21,58 +19,80 @@ defmodule ExLager.Test do
   end
 
   test "notice" do
-    level = 5
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:notice))
     assert disabled == [:debug, :info]
     assert enabled == [:alert, :critical, :emergency, :error, :notice, :warning]
   end
 
   test "warning" do
-    level = 4
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:warning))
     assert disabled == [:debug, :info, :notice]
     assert enabled == [:alert, :critical, :emergency, :error, :warning]
   end
 
   test "error" do
-    level = 3
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:error))
     assert disabled == [:debug, :info, :notice, :warning]
     assert enabled == [:alert, :critical, :emergency, :error]
   end
 
   test "critical" do
-    level = 2
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:critical))
     assert disabled == [:debug, :error, :info, :notice, :warning]
     assert enabled == [:alert, :critical, :emergency]
   end
 
   test "alert" do
-    level = 1
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:alert))
     assert disabled == [:critical, :debug, :error, :info, :notice, :warning]
     assert enabled == [:alert, :emergency]
   end
 
   test "emergency" do
-    level = 0
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:emergency))
     assert disabled == [:alert, :critical, :debug, :error, :info, :notice, :warning]
     assert enabled == [:emergency]
   end
 
   test "none" do
-    level = -1
-    {enabled, disabled} = split(compile(level))
+    {enabled, disabled} = split(compile(:none))
     assert disabled == [:alert, :critical, :debug, :emergency,
       :error, :info, :notice, :warning]
     assert enabled == []
   end
 
+  test "compile_log_level(atom)" do
+    assert compile_log_level(:debug) == :debug
+    assert compile_log_level(:info) == :info
+    assert compile_log_level(:notice) == :notice
+    assert compile_log_level(:warning) == :warning
+    assert compile_log_level(:error) == :error
+    assert compile_log_level(:critical) == :critical
+    assert compile_log_level(:alert) == :alert
+    assert compile_log_level(:emergency) == :emergency
+    assert compile_log_level(:none) == :none
+  end
+
+  test "compile_log_level(integer)" do
+    assert compile_log_level(7) == :debug
+    assert compile_log_level(6) == :info
+    assert compile_log_level(5) == :notice
+    assert compile_log_level(4) == :warning
+    assert compile_log_level(3) == :error
+    assert compile_log_level(2) == :critical
+    assert compile_log_level(1) == :alert
+    assert compile_log_level(0) == :emergency
+    assert compile_log_level(-1) == :none
+  end
+
   teardown_all _context do
     File.rm("#{@top}/test/#{beam(Lager)}")
     :ok
+  end
+
+  defp compile_log_level(level) do
+    true = Lager.compile_log_level(level)
+    Lager.compile_log_level
   end
 
   defp compile(level) do

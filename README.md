@@ -91,4 +91,20 @@ iex(4)> Code.compiler_options exlager_truncation_size: 512
 ok
 ```
 
+If you are mix user you could specify level and truncation_size in mix.exs as follows:
+
+```
+  def project do
+    your_options = []
+    [
+     ...
+     elixirc_options: your_options ++ options(Mix.env)
+    ]
+  end
+
+  defp options(env) when env in [:dev, :test] do
+    [exlager_level: :debug, exlager_truncation_size: 8096]
+  end
+```
+
 
