@@ -85,7 +85,7 @@ true
 If you cannot call those function you can set compiler options:
 
 ```
-iex(3)> Code.compiler_options exlager_level: 7
+iex(3)> Code.compiler_options exlager_level: :debug
 ok
 iex(4)> Code.compiler_options exlager_truncation_size: 512
 ok
