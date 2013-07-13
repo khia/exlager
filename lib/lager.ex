@@ -36,13 +36,17 @@ defmodule Lager do
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
 
   quoted = lc {level, num} inlist levels do
-    quote do: defp level_to_num(unquote(level)),     do:  unquote(num)
+    quote do
+      defp level_to_num(unquote(level)), do:  unquote(num)
+    end
   end
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
   defp level_to_num(_), do: nil
 
   quoted = lc {level, num} inlist levels do
-    quote do: defp num_to_level(unquote(num)),     do:  unquote(level)
+    quote do
+      defp num_to_level(unquote(num)),     do:  unquote(level)
+    end
   end
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
   defp num_to_level(_), do: nil
