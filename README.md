@@ -72,8 +72,15 @@ Application.start :exlager
 Test.test
 ```
 
-It is possible to configure truncation size and compile time log level
-by calling helper functions of Lager from your build system as follows:
+It is possible to configure truncation size and compile time log level.
+Beign a simple wrapper ExLager doesn't attempt to configure underlying Lager.
+You would need to configure it yourself [see](https://github.com/basho/lager) to ensure that:
+
+  * lager_truncation_size >= compile_truncation_size
+  * lager severity level >= compile_log_level
+  * appropriate handlers are configured
+
+Configuration of ExLager can be done by calling helper functions of Lager from your build system as follows:
 
 ```
 iex(1)> Lager.compile_log_level(:info)
