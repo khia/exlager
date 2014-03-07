@@ -1,6 +1,6 @@
 defmodule ExLager.Test do
   use ExUnit.Case
-  @top Path.expand "../..", __FILE__
+  @top Path.expand "../..", __ENV__.file
 
   test "debug" do
     {enabled, disabled} = split(compile(:debug))
