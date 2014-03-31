@@ -80,7 +80,7 @@ defmodule Lager do
     :info
   """
   def compile_log_level() do
-    options = Keyword.from_enum(Code.compiler_options)
+    options = Enum.into(Code.compiler_options, [])
     level = options[:exlager_level] || :info
     if is_integer(level) do
       level = num_to_level(level)
@@ -111,7 +111,7 @@ defmodule Lager do
   end
 
   def compile_truncation_size() do
-    options = Keyword.from_enum(Code.compiler_options)
+    options = Enum.into(Code.compiler_options, [])
     options[:exlager_truncation_size] || 4096
   end
 
