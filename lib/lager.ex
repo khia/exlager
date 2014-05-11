@@ -23,7 +23,7 @@ defmodule Lager do
      none:      -1
     ]
 
-  quoted = lc {level, _num} inlist levels do
+  quoted = for {level, _num} <- levels do
     quote do
       defmacro unquote(level)(message) do
         log(unquote(level), '~s', [message], __CALLER__)
@@ -35,7 +35,7 @@ defmodule Lager do
   end
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
 
-  quoted = lc {level, num} inlist levels do
+  quoted = for {level, num} <- levels do
     quote do
       defp level_to_num(unquote(level)), do:  unquote(num)
     end
@@ -43,7 +43,7 @@ defmodule Lager do
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
   defp level_to_num(_), do: nil
 
-  quoted = lc {level, num} inlist levels do
+  quoted = for {level, num} <- levels do
     quote do
       defp num_to_level(unquote(num)),     do:  unquote(level)
     end
