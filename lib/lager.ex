@@ -1,5 +1,5 @@
 defmodule Lager do
-   defdelegate [
+  defdelegate [
      trace_console(filter),
      trace_file(file, filter, level),
      stop_trace(trace),
@@ -11,17 +11,17 @@ defmodule Lager do
      posix_error(error)
     ], to: :lager
 
-  levels =
-    [debug:      7,
-     info:       6,
-     notice:     5,
-     warning:    4,
-     error:      3,
-     critical:   2,
-     alert:      1,
-     emergency:  0,
-     none:      -1
-    ]
+  levels = [
+    debug:      7,
+    info:       6,
+    notice:     5,
+    warning:    4,
+    error:      3,
+    critical:   2,
+    alert:      1,
+    emergency:  0,
+    none:      -1
+  ]
 
   quoted = for {level, _num} <- levels do
     quote do
@@ -37,7 +37,7 @@ defmodule Lager do
 
   quoted = for {level, num} <- levels do
     quote do
-      defp level_to_num(unquote(level)), do:  unquote(num)
+      defp level_to_num(unquote(level)), do: unquote(num)
     end
   end
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
@@ -45,29 +45,29 @@ defmodule Lager do
 
   quoted = for {level, num} <- levels do
     quote do
-      defp num_to_level(unquote(num)),     do:  unquote(level)
+      defp num_to_level(unquote(num)), do:  unquote(level)
     end
   end
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
   defp num_to_level(_), do: nil
 
   defp log(level, format, args, caller) do
-    {name, __arity} = caller.function || {:unknown, 0}
+    {name, _arity} = caller.function || {:unknown, 0}
     module = caller.module || :unknown
     if is_binary(format), do: format = String.to_char_list!(format)
     if should_log(level) do
-       dispatch(level, module, name, caller.line, format, args)
+      dispatch(level, module, name, caller.line, format, args)
     end
   end
 
   defp dispatch(level, module, name, line, format, args) do
     quote do
       :lager.dispatch_log(unquote(level),
-         [module: unquote(module),
-          function: unquote(name),
-          line: unquote(line),
-          pid: self],
-         unquote(format), unquote(args), unquote(compile_truncation_size))
+        [module: unquote(module),
+         function: unquote(name),
+         line: unquote(line),
+         pid: self],
+        unquote(format), unquote(args), unquote(compile_truncation_size))
     end
   end
 
@@ -80,8 +80,7 @@ defmodule Lager do
     :info
   """
   def compile_log_level() do
-    options = Enum.into(Code.compiler_options, [])
-    level = options[:exlager_level] || :info
+    level = Application.get_env(:exlager, :level, :info)
     if is_integer(level) do
       level = num_to_level(level)
       IO.puts "Using integers is deprecated, please use :#{level} instead"
@@ -102,7 +101,7 @@ defmodule Lager do
     compile_log_level(num_to_level(level))
   end
   def compile_log_level(level) when is_atom(level) do
-    :ok = Code.compiler_options exlager_level: level
+    :ok = Application.put_env(:exlager, :level, level)
     true
   end
   def compile_log_level(level) do
@@ -111,8 +110,7 @@ defmodule Lager do
   end
 
   def compile_truncation_size() do
-    options = Enum.into(Code.compiler_options, [])
-    options[:exlager_truncation_size] || 4096
+    Application.get_env(:exlager, :truncation_size, 4096)
   end
 
   @doc """
@@ -123,7 +121,7 @@ defmodule Lager do
     true
   """
   def compile_truncation_size(size) do
-    :ok = Code.compiler_options exlager_truncation_size: size
+    :ok = Application.put_env(:exlager, :truncation_size, size)
     true
   end
 end
