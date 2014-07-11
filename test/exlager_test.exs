@@ -85,8 +85,8 @@ defmodule ExLager.Test do
     assert compile_log_level(-1) == :none
   end
 
-  teardown_all _context do
-    File.rm("#{@top}/test/#{beam(Lager)}")
+  setup_all do
+    on_exit fn -> File.rm("#{@top}/test/#{beam(Lager)}") end
     :ok
   end
 
@@ -97,7 +97,7 @@ defmodule ExLager.Test do
 
   defp compile(level) do
     :code.purge Lager
-    Code.compiler_options exlager_level: level
+    Application.put_env :exlager, :level, level
     Kernel.ParallelCompiler.files_to_path ["#{@top}/lib/lager.ex"], "#{@top}/test"
     Code.ensure_compiled(Lager)
     quoted =
