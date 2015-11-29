@@ -26,7 +26,7 @@ defmodule Lager do
   quoted = for {level, _num} <- levels do
     quote do
       defmacro unquote(level)(message) do
-        log(unquote(level), '~s', [message], __CALLER__)
+        log(unquote(level), '~ts', [message], __CALLER__)
       end
       defmacro unquote(level)(format, message) do
         log(unquote(level), format, message, __CALLER__)
