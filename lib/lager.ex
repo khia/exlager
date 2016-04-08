@@ -8,7 +8,8 @@ defmodule Lager do
      set_loglevel(handler, level),
      set_loglevel(handler, indent, level),
      get_loglevel(handler),
-     posix_error(error)
+     posix_error(error),
+     md, md(new_md_list)
     ], to: :lager
 
   levels = [
