@@ -85,6 +85,13 @@ defmodule ExLager.Test do
     assert compile_log_level(-1) == :none
   end
 
+  test "get and set metadata" do
+    assert [] = Lager.md
+    new_md_list = [md1: "foo", md2: "bar"]
+    assert :ok = Lager.md(new_md_list)
+    assert ^new_md_list = Lager.md
+  end
+
   setup_all do
     on_exit fn -> File.rm("#{@top}/test/#{beam(Lager)}") end
     :ok
@@ -122,7 +129,7 @@ defmodule ExLager.Test do
 
   defp split(macros) do
     {e, d} = Enum.reduce macros, {[], []}, fn({level, res}, {e, d}) ->
-      if nil?(res) do
+      if is_nil(res) do
         {e, [level|d]}
       else
         {[level|e], d}
