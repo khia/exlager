@@ -1,16 +1,15 @@
 defmodule Lager do
-  defdelegate [
-     trace_console(filter),
-     trace_file(file, filter, level),
-     stop_trace(trace),
-     clear_all_traces(),
-     status(),
-     set_loglevel(handler, level),
-     set_loglevel(handler, indent, level),
-     get_loglevel(handler),
-     posix_error(error),
-     md, md(new_md_list)
-    ], to: :lager
+  defdelegate trace_console(filter), to: :lager
+  defdelegate trace_file(file, filter, level), to: :lager
+  defdelegate stop_trace(trace), to: :lager
+  defdelegate clear_all_traces(), to: :lager
+  defdelegate status(), to: :lager
+  defdelegate set_loglevel(handler, level), to: :lager
+  defdelegate set_loglevel(handler, indent, level), to: :lager
+  defdelegate get_loglevel(handler), to: :lager
+  defdelegate posix_error(error), to: :lager
+  defdelegate md, to: :lager
+  defdelegate md(new_md_list), to: :lager
 
   levels = [
     debug:      7,
@@ -55,7 +54,7 @@ defmodule Lager do
   defp log(level, format, args, caller) do
     {name, _arity} = caller.function || {:unknown, 0}
     module = caller.module || :unknown
-    if is_binary(format), do: format = String.to_char_list(format)
+    format = if is_binary(format), do: String.to_char_list(format)
     if should_log(level) do
       dispatch(level, module, name, caller.line, format, args)
     end
@@ -74,6 +73,12 @@ defmodule Lager do
 
   defp should_log(level), do: level_to_num(level) <= level_to_num(compile_log_level)
 
+  defp pcompile_log_level(level) when is_integer(level) do
+    IO.puts "Using integers is deprecated, please use string form of level instead"
+    num_to_level(level)
+  end
+  defp pcompile_log_level(level), do: level
+
   @doc """
   This function is used to get compile time log level.
   Examples:
@@ -81,12 +86,7 @@ defmodule Lager do
     :info
   """
   def compile_log_level() do
-    level = Application.get_env(:exlager, :level, :info)
-    if is_integer(level) do
-      level = num_to_level(level)
-      IO.puts "Using integers is deprecated, please use :#{level} instead"
-    end
-    level
+    pcompile_log_level(Application.get_env(:exlager, :level, :info))
   end
 
   @doc """
