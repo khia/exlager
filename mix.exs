@@ -5,7 +5,7 @@ defmodule Exlager.Mixfile do
     [
       app: :exlager,
       version: "0.14.0",
-      elixir: "> 0.14.0",
+      elixir: ">= 1.3.0",
       deps: deps
     ]
   end
@@ -22,7 +22,7 @@ defmodule Exlager.Mixfile do
 
   defp deps do
     [
-      {:lager, git: "https://github.com/basho/lager.git", tag: "2.1.0"},
+      {:lager, "~> 3.2"},
     ]
   end
 end
