@@ -103,6 +103,7 @@ defmodule ExLager.Test do
   end
 
   defp compile(level) do
+    Code.compiler_options(ignore_module_conflict: true)
     :code.purge Lager
     Application.put_env :exlager, :level, level
     Kernel.ParallelCompiler.files_to_path ["#{@top}/lib/lager.ex"], "#{@top}/test"
