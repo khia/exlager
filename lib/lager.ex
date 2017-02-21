@@ -71,12 +71,12 @@ defmodule Lager do
         [module: unquote(module),
          function: unquote(name),
          line: unquote(line),
-         pid: self],
-        unquote(format), unquote(args), unquote(compile_truncation_size))
+         pid: self()],
+        unquote(format), unquote(args), unquote(compile_truncation_size()))
     end
   end
 
-  defp should_log(level), do: level_to_num(level) <= level_to_num(compile_log_level)
+  defp should_log(level), do: level_to_num(level) <= level_to_num(compile_log_level())
 
   @doc """
   This function is used to get compile time log level.
