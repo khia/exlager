@@ -71,7 +71,8 @@ defmodule Lager do
         [module: unquote(module),
          function: unquote(name),
          line: unquote(line),
-         pid: self()],
+         pid: self(),
+         node: node()] ++ :lager.md(),
         unquote(format), unquote(args), unquote(compile_truncation_size()))
     end
   end
