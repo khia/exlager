@@ -9,7 +9,7 @@ any negative impact on performance of a production system when you configure
 error level even if you have tons of debug messages.
 
 Information about location of a call (module, function, line, pid) is properly
-passed to lager for your convinience so you can easily find the source of a message.
+passed to lager for your convenience so you can easily find the source of a message.
 In this aspect using ExLager is equal to using parse transform shipped with
 basho lager.
 
@@ -72,8 +72,10 @@ Application.start :exlager
 Test.test
 ```
 
+Configuration
+-------------
 It is possible to configure truncation size and compile time log level.
-Beign a simple wrapper ExLager doesn't attempt to configure underlying Lager.
+Being a simple wrapper ExLager doesn't attempt to configure underlying Lager.
 You would need to configure it yourself [see](https://github.com/basho/lager) to ensure that:
 
   * lager_truncation_size >= compile_truncation_size
@@ -108,4 +110,13 @@ If you are mix user you could specify level and truncation_size in *config/confi
       truncation_size: 8096
 ```
 
+Multiple Sink Support
+---------------------
+As of Lager 3.x, you can configure multiple sinks to provide different behavior
+for different streams of logs.  To use a different sink, prepend the name to the
+logging calls above.  For example, to use the `magic_lager_event` sink, you can
+do the following:
 
+```
+Lager.info :magic, "magic event"
+```
