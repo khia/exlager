@@ -1,4 +1,6 @@
 defmodule Lager do
+  @default_sink :lager_event
+
   defdelegate trace_console(filter), to: :lager
   defdelegate trace_file(file, filter, level), to: :lager
   defdelegate stop_trace(trace), to: :lager
@@ -26,10 +28,18 @@ defmodule Lager do
   quoted = for {level, _num} <- levels do
     quote do
       defmacro unquote(level)(message) do
-        log(unquote(level), '~ts', [message], __CALLER__)
+        log(@default_sink, unquote(level), '~ts', [message], __CALLER__)
+      end
+      defmacro unquote(level)(sink, message) when is_atom(sink) do
+        sink_evt = String.to_atom(Atom.to_string(sink) <> "_lager_event")
+        log(sink_evt, unquote(level), '~ts', [message], __CALLER__)
       end
       defmacro unquote(level)(format, message) do
-        log(unquote(level), format, message, __CALLER__)
+        log(@default_sink, unquote(level), format, message, __CALLER__)
+      end
+      defmacro unquote(level)(sink, format, message) when is_atom(sink) do
+        sink_evt = String.to_atom(Atom.to_string(sink) <> "_lager_event")
+        log(sink_evt, unquote(level), format, message, __CALLER__)
       end
     end
   end
@@ -51,7 +61,7 @@ defmodule Lager do
   Module.eval_quoted __MODULE__, quoted, [], __ENV__
   defp num_to_level(_), do: nil
 
-  defp log(level, format, args, caller) do
+  defp log(sink, level, format, args, caller) do
     {name, _arity} = caller.function || {:unknown, 0}
     module = caller.module || :unknown
     format =
@@ -61,19 +71,20 @@ defmodule Lager do
         format
       end
     if should_log(level) do
-      dispatch(level, module, name, caller.line, format, args)
+      dispatch(sink, level, module, name, caller.line, format, args)
     end
   end
 
-  defp dispatch(level, module, name, line, format, args) do
+  defp dispatch(sink, level, module, name, line, format, args) do
     quote do
-      :lager.dispatch_log(unquote(level),
+      :lager.dispatch_log(unquote(sink), unquote(level),
         [module: unquote(module),
          function: unquote(name),
          line: unquote(line),
          pid: self(),
          node: node()] ++ :lager.md(),
-        unquote(format), unquote(args), unquote(compile_truncation_size()))
+        unquote(format), unquote(args), unquote(compile_truncation_size()),
+        :safe)
     end
   end
 

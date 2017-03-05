@@ -4,7 +4,7 @@ defmodule Exlager.Mixfile do
   def project do
     [
       app: :exlager,
-      version: "0.14.0",
+      version: "0.14.1",
       elixir: "> 0.14.0",
       deps: deps()
     ]
@@ -22,7 +22,7 @@ defmodule Exlager.Mixfile do
 
   defp deps do
     [
-      {:lager, git: "https://github.com/basho/lager.git"},
+      {:lager, git: "https://github.com/basho/lager.git", tag: "3.2.4"},
     ]
   end
 end
